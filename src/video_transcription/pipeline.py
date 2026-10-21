@@ -3,9 +3,15 @@
 import os
 import sys
 import argparse
+import warnings
 from pathlib import Path
 from typing import Optional
 from tqdm import tqdm
+
+# Suppress harmless third-party runtime warnings (e.g. torchcodec fallback)
+warnings.filterwarnings("ignore", category=UserWarning, module=r"pyannote.*")
+warnings.filterwarnings("ignore", message=r".*torchcodec.*")
+warnings.filterwarnings("ignore", message=r".*upgrade_checkpoint.*")
 
 from .audio import extract_audio_ffmpeg
 from .export import save_transcription_outputs

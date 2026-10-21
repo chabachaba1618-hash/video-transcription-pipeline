@@ -1,9 +1,16 @@
 """Utilities to download and pre-cache model weights in standard system directories."""
 
 import os
+import sys
 import argparse
+import warnings
 from pathlib import Path
 from tqdm import tqdm
+
+# Filter out non-fatal torchcodec / lightning warnings from terminal output
+warnings.filterwarnings("ignore", category=UserWarning, module=r"pyannote.*")
+warnings.filterwarnings("ignore", message=r".*torchcodec.*")
+warnings.filterwarnings("ignore", message=r".*upgrade_checkpoint.*")
 
 
 def get_default_hf_cache_dir() -> Path:
