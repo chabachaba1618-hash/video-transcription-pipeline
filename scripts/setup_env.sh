@@ -37,6 +37,12 @@ echo "Installing all dependencies into .venv using uv..."
 uv pip install -r requirements.txt
 uv pip install -e .
 
+# Link package directory directly to site-packages (bypasses macOS UF_HIDDEN .pth issue completely)
+SITE_PACKAGES=$(.venv/bin/python3 -c "import site; print(site.getsitepackages()[0])" 2>/dev/null || true)
+if [ -n "$SITE_PACKAGES" ] && [ -d "$SITE_PACKAGES" ]; then
+    ln -sfn "$ROOT_DIR/src/video_transcription" "$SITE_PACKAGES/video_transcription"
+fi
+
 # Ensure macOS does not set UF_HIDDEN on .venv .pth files (which Python 3.12 skips by default)
 if [[ "$OSTYPE" == "darwin"* ]]; then
     chflags -R nohidden .venv 2>/dev/null || true
