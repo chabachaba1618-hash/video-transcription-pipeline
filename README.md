@@ -74,7 +74,32 @@ uv pip install -r requirements.txt
 uv pip install -e .
 ```
 
-### 2. Pre-download Weights (Standard Cache)
+### 2. Activating the Virtual Environment
+
+Activate the `.venv` environment in your shell:
+
+**macOS / Linux (Bash/Zsh):**
+```bash
+source .venv/bin/activate
+```
+
+**Windows (PowerShell):**
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+**Windows (Command Prompt):**
+```cmd
+.venv\Scripts\activate.bat
+```
+
+> **Tip**: Once activated, your shell prompt will show `(.venv)`. You can then run any script or command directly (e.g. `transcribe`, `download-weights`, or `python scripts/transcribe_pipeline.py`) without prefixing with `uv run`.
+> To exit the environment at any time, simply run:
+> ```bash
+> deactivate
+> ```
+
+### 3. Pre-download Weights (Standard Cache)
 
 Pre-load `large-v3` and alignment weights directly into `~/.cache/huggingface/hub/`:
 ```bash
@@ -89,7 +114,7 @@ uv run download-weights --model large-v3 --hf-token "your_hf_token_here"
 
 ---
 
-## 3. Running the Transcription Pipeline
+## Running the Transcription Pipeline
 
 ### Basic Usage (Full Video)
 ```bash
