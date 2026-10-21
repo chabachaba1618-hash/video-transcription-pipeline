@@ -46,22 +46,28 @@ def run_pipeline(
         base_name = base_name[:-len(".extracted")]
     output_stem = out_dir / base_name
 
-    # Determine hardware device and compute type
+    # Determine hardware devices:
+    # - CTranslate2 (Whisper ASR) supports 'cpu' or 'cuda'
+    # - PyTorch (Alignment & PyAnnote Diarization) supports 'cuda', 'mps' (Metal GPU), or 'cpu'
     import torch
     if device is None:
-        device = "cuda" if torch.cuda.is_available() else "cpu"
+        asr_device = "cuda" if torch.cuda.is_available() else "cpu"
+        pytorch_device = "cuda" if torch.cuda.is_available() else ("mps" if torch.backends.mps.is_available() else "cpu")
+    else:
+        asr_device = device
+        pytorch_device = device
 
     if compute_type is None:
         # On CPU (including Apple Silicon ARM64), int8 is faster and memory-efficient
-        compute_type = "float16" if device == "cuda" else "int8"
+        compute_type = "float16" if asr_device == "cuda" else "int8"
 
     print("======================================================================")
     print("           VIDEO-TO-TEXT TRANSCRIPTION & DIARIZATION PIPELINE          ")
     print("======================================================================")
     print(f"Input file:     {media_path}")
     print(f"Output dir:     {out_dir}")
-    print(f"Model:          Whisper {model_name}")
-    print(f"Device:         {device}")
+    print(f"ASR Model:      Whisper {model_name} (on {asr_device.upper()})")
+    print(f"Alignment/Diar: PyTorch (on {pytorch_device.upper()})")
     print(f"Compute Type:   {compute_type}")
     print(f"Batch Size:     {batch_size}")
     print(f"Word Alignment: {do_align}")
@@ -100,7 +106,7 @@ def run_pipeline(
     with tqdm(total=1, desc="Loading Whisper Model", unit="model") as pbar:
         model = whisperx.load_model(
             model_name,
-            device=device,
+            device=asr_device,
             compute_type=compute_type,
             language=language,
         )
@@ -121,12 +127,12 @@ def run_pipeline(
 
     # Stage 3: Word Alignment
     if do_align:
-        print(f"\n[3/5] Performing word-level alignment (Language: {detected_lang})...")
+        print(f"\n[3/5] Performing word-level alignment on {pytorch_device.upper()} (Language: {detected_lang})...")
         try:
             with tqdm(total=1, desc="Loading Alignment Model", unit="model") as pbar:
                 model_a, metadata = whisperx.load_align_model(
                     language_code=detected_lang,
-                    device=device,
+                    device=pytorch_device,
                 )
                 pbar.update(1)
 
@@ -136,7 +142,7 @@ def run_pipeline(
                     model_a,
                     metadata,
                     audio,
-                    device,
+                    pytorch_device,
                     return_char_alignments=False,
                 )
                 pbar.update(1)
@@ -149,7 +155,7 @@ def run_pipeline(
     # Stage 4: Speaker Diarization
     speaker_labeled = False
     if do_diarize:
-        print("\n[4/5] Running Speaker Diarization (PyAnnote)...")
+        print(f"\n[4/5] Running Speaker Diarization on {pytorch_device.upper()} (PyAnnote)...")
         import huggingface_hub
         token = hf_token or os.environ.get("HF_TOKEN") or os.environ.get("HUGGINGFACE_TOKEN") or huggingface_hub.get_token()
         if not token:
@@ -163,7 +169,7 @@ def run_pipeline(
                 with tqdm(total=1, desc="Loading PyAnnote Diarization", unit="model") as pbar:
                     diarize_model = DiarizationPipeline(
                         token=token,
-                        device=device,
+                        device=pytorch_device,
                     )
                     pbar.update(1)
 
