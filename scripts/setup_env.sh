@@ -37,6 +37,11 @@ echo "Installing all dependencies into .venv using uv..."
 uv pip install -r requirements.txt
 uv pip install -e .
 
+# Ensure macOS does not set UF_HIDDEN on .venv .pth files (which Python 3.12 skips by default)
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    chflags -R nohidden .venv 2>/dev/null || true
+fi
+
 echo "=== Environment setup complete! ==="
 echo "To activate: source .venv/bin/activate"
 echo "Or run scripts directly with uv: uv run transcribe <video>"

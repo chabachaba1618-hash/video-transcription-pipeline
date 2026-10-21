@@ -36,6 +36,8 @@ def run_pipeline(
     out_dir = Path(output_dir).expanduser().resolve() if output_dir else media_path.parent
     out_dir.mkdir(parents=True, exist_ok=True)
     base_name = media_path.stem
+    if base_name.endswith(".extracted"):
+        base_name = base_name[:-len(".extracted")]
     output_stem = out_dir / base_name
 
     # Determine hardware device and compute type
@@ -64,12 +66,26 @@ def run_pipeline(
 
     # Stage 1: Audio Extraction
     extracted_wav = output_stem.with_suffix(".extracted.wav")
-    extract_audio_ffmpeg(
-        media_path=media_path,
-        output_wav_path=extracted_wav,
-        start_time=start_time,
-        duration=duration,
-    )
+    if media_path.resolve() == extracted_wav.resolve() and start_time is None and duration is None:
+        print("[1/5] Input is already the extracted audio file. Using directly.")
+    else:
+        # If input and output are the same path but need clipping, extract via temp file
+        if media_path.resolve() == extracted_wav.resolve():
+            temp_wav = output_stem.with_suffix(".tmp.wav")
+            extract_audio_ffmpeg(
+                media_path=media_path,
+                output_wav_path=temp_wav,
+                start_time=start_time,
+                duration=duration,
+            )
+            temp_wav.replace(extracted_wav)
+        else:
+            extract_audio_ffmpeg(
+                media_path=media_path,
+                output_wav_path=extracted_wav,
+                start_time=start_time,
+                duration=duration,
+            )
 
     import whisperx
 
