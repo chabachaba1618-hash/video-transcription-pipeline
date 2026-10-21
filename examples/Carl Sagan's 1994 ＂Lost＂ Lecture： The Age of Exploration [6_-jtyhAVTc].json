@@ -1,0 +1,478 @@
+{
+  "segments": [
+    {
+      "start": 2.866,
+      "end": 4.407,
+      "text": " Good evening, ladies and gentlemen.",
+      "words": [
+        {
+          "word": "Good",
+          "start": 2.866,
+          "end": 3.006,
+          "score": 0.907
+        },
+        {
+          "word": "evening,",
+          "start": 3.066,
+          "end": 3.386,
+          "score": 0.829
+        },
+        {
+          "word": "ladies",
+          "start": 3.407,
+          "end": 3.707,
+          "score": 0.9
+        },
+        {
+          "word": "and",
+          "start": 3.767,
+          "end": 3.847,
+          "score": 0.955
+        },
+        {
+          "word": "gentlemen.",
+          "start": 3.887,
+          "end": 4.407,
+          "score": 0.85
+        }
+      ],
+      "avg_logprob": -0.04503167265990995
+    },
+    {
+      "start": 5.388,
+      "end": 26.949,
+      "text": "It is my privilege to introduce to you Emeritus Professor of Physics, Emeritus Dean of Engineering, Emeritus Provost of Cornell University, and Emeritus President of Cornell University, Dale Corson, who will introduce Carl.",
+      "words": [
+        {
+          "word": "It",
+          "start": 5.388,
+          "end": 5.448,
+          "score": 0.998
+        },
+        {
+          "word": "is",
+          "start": 5.549,
+          "end": 5.629,
+          "score": 0.712
+        },
+        {
+          "word": "my",
+          "start": 5.689,
+          "end": 5.849,
+          "score": 0.849
+        },
+        {
+          "word": "privilege",
+          "start": 5.909,
+          "end": 6.409,
+          "score": 0.814
+        },
+        {
+          "word": "to",
+          "start": 6.469,
+          "end": 6.57,
+          "score": 0.798
+        },
+        {
+          "word": "introduce",
+          "start": 6.63,
+          "end": 7.15,
+          "score": 0.851
+        },
+        {
+          "word": "to",
+          "start": 7.21,
+          "end": 7.29,
+          "score": 0.833
+        },
+        {
+          "word": "you",
+          "start": 7.35,
+          "end": 7.57,
+          "score": 0.801
+        },
+        {
+          "word": "Emeritus",
+          "start": 7.59,
+          "end": 9.612,
+          "score": 0.892
+        },
+        {
+          "word": "Professor",
+          "start": 9.753,
+          "end": 10.273,
+          "score": 0.848
+        },
+        {
+          "word": "of",
+          "start": 10.293,
+          "end": 10.333,
+          "score": 0.882
+        },
+        {
+          "word": "Physics,",
+          "start": 10.413,
+          "end": 10.874,
+          "score": 0.956
+        },
+        {
+          "word": "Emeritus",
+          "start": 12.675,
+          "end": 13.376,
+          "score": 0.801
+        },
+        {
+          "word": "Dean",
+          "start": 13.656,
+          "end": 14.017,
+          "score": 0.83
+        },
+        {
+          "word": "of",
+          "start": 14.237,
+          "end": 14.317,
+          "score": 0.822
+        },
+        {
+          "word": "Engineering,",
+          "start": 14.397,
+          "end": 15.058,
+          "score": 0.824
+        },
+        {
+          "word": "Emeritus",
+          "start": 16.859,
+          "end": 17.5,
+          "score": 0.814
+        },
+        {
+          "word": "Provost",
+          "start": 17.68,
+          "end": 18.241,
+          "score": 0.948
+        },
+        {
+          "word": "of",
+          "start": 18.661,
+          "end": 18.721,
+          "score": 0.992
+        },
+        {
+          "word": "Cornell",
+          "start": 18.801,
+          "end": 19.141,
+          "score": 0.842
+        },
+        {
+          "word": "University,",
+          "start": 19.201,
+          "end": 19.882,
+          "score": 0.928
+        },
+        {
+          "word": "and",
+          "start": 21.063,
+          "end": 21.123,
+          "score": 0.65
+        },
+        {
+          "word": "Emeritus",
+          "start": 21.183,
+          "end": 21.704,
+          "score": 0.717
+        },
+        {
+          "word": "President",
+          "start": 21.804,
+          "end": 22.344,
+          "score": 0.936
+        },
+        {
+          "word": "of",
+          "start": 22.785,
+          "end": 22.845,
+          "score": 0.994
+        },
+        {
+          "word": "Cornell",
+          "start": 22.925,
+          "end": 23.285,
+          "score": 0.863
+        },
+        {
+          "word": "University,",
+          "start": 23.345,
+          "end": 24.026,
+          "score": 0.915
+        },
+        {
+          "word": "Dale",
+          "start": 24.466,
+          "end": 24.747,
+          "score": 0.826
+        },
+        {
+          "word": "Corson,",
+          "start": 24.807,
+          "end": 25.347,
+          "score": 0.963
+        },
+        {
+          "word": "who",
+          "start": 25.728,
+          "end": 25.848,
+          "score": 0.947
+        },
+        {
+          "word": "will",
+          "start": 25.868,
+          "end": 26.028,
+          "score": 0.957
+        },
+        {
+          "word": "introduce",
+          "start": 26.068,
+          "end": 26.548,
+          "score": 0.885
+        },
+        {
+          "word": "Carl.",
+          "start": 26.608,
+          "end": 26.949,
+          "score": 0.87
+        }
+      ],
+      "avg_logprob": -0.04503167265990995
+    }
+  ],
+  "word_segments": [
+    {
+      "word": "Good",
+      "start": 2.866,
+      "end": 3.006,
+      "score": 0.907
+    },
+    {
+      "word": "evening,",
+      "start": 3.066,
+      "end": 3.386,
+      "score": 0.829
+    },
+    {
+      "word": "ladies",
+      "start": 3.407,
+      "end": 3.707,
+      "score": 0.9
+    },
+    {
+      "word": "and",
+      "start": 3.767,
+      "end": 3.847,
+      "score": 0.955
+    },
+    {
+      "word": "gentlemen.",
+      "start": 3.887,
+      "end": 4.407,
+      "score": 0.85
+    },
+    {
+      "word": "It",
+      "start": 5.388,
+      "end": 5.448,
+      "score": 0.998
+    },
+    {
+      "word": "is",
+      "start": 5.549,
+      "end": 5.629,
+      "score": 0.712
+    },
+    {
+      "word": "my",
+      "start": 5.689,
+      "end": 5.849,
+      "score": 0.849
+    },
+    {
+      "word": "privilege",
+      "start": 5.909,
+      "end": 6.409,
+      "score": 0.814
+    },
+    {
+      "word": "to",
+      "start": 6.469,
+      "end": 6.57,
+      "score": 0.798
+    },
+    {
+      "word": "introduce",
+      "start": 6.63,
+      "end": 7.15,
+      "score": 0.851
+    },
+    {
+      "word": "to",
+      "start": 7.21,
+      "end": 7.29,
+      "score": 0.833
+    },
+    {
+      "word": "you",
+      "start": 7.35,
+      "end": 7.57,
+      "score": 0.801
+    },
+    {
+      "word": "Emeritus",
+      "start": 7.59,
+      "end": 9.612,
+      "score": 0.892
+    },
+    {
+      "word": "Professor",
+      "start": 9.753,
+      "end": 10.273,
+      "score": 0.848
+    },
+    {
+      "word": "of",
+      "start": 10.293,
+      "end": 10.333,
+      "score": 0.882
+    },
+    {
+      "word": "Physics,",
+      "start": 10.413,
+      "end": 10.874,
+      "score": 0.956
+    },
+    {
+      "word": "Emeritus",
+      "start": 12.675,
+      "end": 13.376,
+      "score": 0.801
+    },
+    {
+      "word": "Dean",
+      "start": 13.656,
+      "end": 14.017,
+      "score": 0.83
+    },
+    {
+      "word": "of",
+      "start": 14.237,
+      "end": 14.317,
+      "score": 0.822
+    },
+    {
+      "word": "Engineering,",
+      "start": 14.397,
+      "end": 15.058,
+      "score": 0.824
+    },
+    {
+      "word": "Emeritus",
+      "start": 16.859,
+      "end": 17.5,
+      "score": 0.814
+    },
+    {
+      "word": "Provost",
+      "start": 17.68,
+      "end": 18.241,
+      "score": 0.948
+    },
+    {
+      "word": "of",
+      "start": 18.661,
+      "end": 18.721,
+      "score": 0.992
+    },
+    {
+      "word": "Cornell",
+      "start": 18.801,
+      "end": 19.141,
+      "score": 0.842
+    },
+    {
+      "word": "University,",
+      "start": 19.201,
+      "end": 19.882,
+      "score": 0.928
+    },
+    {
+      "word": "and",
+      "start": 21.063,
+      "end": 21.123,
+      "score": 0.65
+    },
+    {
+      "word": "Emeritus",
+      "start": 21.183,
+      "end": 21.704,
+      "score": 0.717
+    },
+    {
+      "word": "President",
+      "start": 21.804,
+      "end": 22.344,
+      "score": 0.936
+    },
+    {
+      "word": "of",
+      "start": 22.785,
+      "end": 22.845,
+      "score": 0.994
+    },
+    {
+      "word": "Cornell",
+      "start": 22.925,
+      "end": 23.285,
+      "score": 0.863
+    },
+    {
+      "word": "University,",
+      "start": 23.345,
+      "end": 24.026,
+      "score": 0.915
+    },
+    {
+      "word": "Dale",
+      "start": 24.466,
+      "end": 24.747,
+      "score": 0.826
+    },
+    {
+      "word": "Corson,",
+      "start": 24.807,
+      "end": 25.347,
+      "score": 0.963
+    },
+    {
+      "word": "who",
+      "start": 25.728,
+      "end": 25.848,
+      "score": 0.947
+    },
+    {
+      "word": "will",
+      "start": 25.868,
+      "end": 26.028,
+      "score": 0.957
+    },
+    {
+      "word": "introduce",
+      "start": 26.068,
+      "end": 26.548,
+      "score": 0.885
+    },
+    {
+      "word": "Carl.",
+      "start": 26.608,
+      "end": 26.949,
+      "score": 0.87
+    }
+  ]
+}
