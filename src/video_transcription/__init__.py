@@ -1,21 +1,24 @@
 """
 Universal Video-to-Text Transcription & Speaker Diarization Pipeline.
-Powered by FFmpeg, WhisperX (large-v3), and PyAnnote.
+Powered by FFmpeg, Qwen3-ASR (1.7B), and PyAnnote.
 """
 
-from .pipeline import run_pipeline, main as transcribe_main
 from .audio import extract_audio_ffmpeg, find_ffmpeg
-from .export import save_transcription_outputs
-from .weights import download_whisper_weights, download_alignment_weights, download_diarization_weights
+from .export import format_timestamp_srt, format_timestamp_vtt, save_transcription_outputs
+from .pipeline import assign_speakers_to_words, group_words_into_segments, main as transcribe_main, run_pipeline
+from .weights import download_diarization_weights, download_qwen_weights
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __all__ = [
-    "run_pipeline",
-    "transcribe_main",
+    "assign_speakers_to_words",
+    "download_diarization_weights",
+    "download_qwen_weights",
     "extract_audio_ffmpeg",
     "find_ffmpeg",
+    "format_timestamp_srt",
+    "format_timestamp_vtt",
+    "group_words_into_segments",
+    "run_pipeline",
     "save_transcription_outputs",
-    "download_whisper_weights",
-    "download_alignment_weights",
-    "download_diarization_weights",
+    "transcribe_main",
 ]

@@ -1,6 +1,6 @@
 # Universal Video-to-Text Transcription & Speaker Diarization Pipeline
 
-A production-ready pipeline for transcribing video or audio files into structured text using **FFmpeg**, **OpenAI Whisper large-v3** (via WhisperX / CTranslate2), **Wav2Vec2** phoneme alignment, and **PyAnnote Speaker Diarization**.
+A production-ready pipeline for transcribing video or audio files into structured text using **FFmpeg**, **Qwen3-ASR-1.7B** (`QwenLM/Qwen3-ASR`), **Qwen3-ForcedAligner-0.6B** for word-level timestamps, and **PyAnnote Speaker Diarization**.
 
 ---
 
@@ -27,6 +27,9 @@ speech-to-text_interview/
 │       ├── export.py                  # Formatters: TXT, SRT, VTT, JSON
 │       └── weights.py                 # Weight pre-caching utilities
 │
+├── tests/                             # Automated test suite
+│   └── test_pipeline.py               # Unit tests for formatters, alignment, diarization
+│
 ├── data/
 │   ├── input/                         # Local media inputs (ignored by git)
 │   └── output/                        # Default output destination (ignored by git)
@@ -40,20 +43,22 @@ speech-to-text_interview/
 
 ---
 
-## Deliverables Included
+## Architecture & Features
 
-1. **UV Environment with all packages loaded**:
-   - Python 3.12 virtual environment managed via `uv`.
-   - Pre-installed wheels for `whisperx`, `torch`, `torchaudio`, `ctranslate2`, `pyannote-audio`, and `tqdm`.
-   - Registered CLI commands `transcribe` and `download-weights`.
+1. **Qwen3-ASR-1.7B Speech Recognition**:
+   - High-accuracy speech-to-text across 52 languages and dialects.
+   - Accelerated natively on Apple Silicon Mac (`mps` via Metal Performance Shaders) with `torch.float16`, on CUDA with `torch.bfloat16`, and on CPU with `torch.float32`.
 
-2. **Pre-cached Weights in Standard Directories**:
-   - Whisper `large-v3` cached in `~/.cache/huggingface/hub/models--Systran--faster-whisper-large-v3`.
-   - Wav2Vec2 alignment models cached in `~/.cache/torch/hub/checkpoints/`.
-   - Script `scripts/download_weights.py` to pre-download any model offline.
+2. **Qwen3-ForcedAligner-0.6B Timestamp Alignment**:
+   - Non-autoregressive forced alignment engine providing word- and token-level start and end timestamps.
 
-3. **Python Pipeline Script**:
-   - `scripts/transcribe_pipeline.py` (or `transcribe` CLI): Universal media conversion, `tqdm` progress tracking, word alignment, optional speaker diarization, and multi-format output generation (`.txt`, `.srt`, `.vtt`, `.json`).
+3. **PyAnnote Speaker Diarization**:
+   - Cascaded speaker clustering (`pyannote/speaker-diarization-community-1`) assigns speaker turn labels (`SPEAKER_00`, `SPEAKER_01`, etc.) to aligned words and dialogue segments.
+
+4. **Robust Multi-Format Subtitle & Transcript Exporter**:
+   - Exports `.txt`, `.srt`, `.vtt`, and `.json`.
+   - Includes millisecond roll-over protection (prevents 4-digit milliseconds like `00:00:01,1000`).
+   - Supports safe handling of missing timestamps and filenames containing dots.
 
 ---
 
@@ -93,23 +98,23 @@ source .venv/bin/activate
 .venv\Scripts\activate.bat
 ```
 
-> **Tip**: Once activated, your shell prompt will show `(.venv)`. You can then run any script or command directly (e.g. `transcribe`, `download-weights`, or `python scripts/transcribe_pipeline.py`) without prefixing with `uv run`.
-> To exit the environment at any time, simply run:
+> **Tip**: Once activated, your shell prompt will show `(.venv)`. You can then run any command directly (e.g. `transcribe`, `download-weights`, or `pytest`) without prefixing with `uv run`.
+> To exit the environment at any time:
 > ```bash
 > deactivate
 > ```
 
 ### 3. Pre-download Weights (Standard Cache)
 
-Pre-load `large-v3` and alignment weights directly into `~/.cache/huggingface/hub/`:
+Pre-load `Qwen/Qwen3-ASR-1.7B` and `Qwen/Qwen3-ForcedAligner-0.6B` directly into `~/.cache/huggingface/hub/`:
 ```bash
-uv run download-weights --model large-v3
-# or: python scripts/download_weights.py --model large-v3
+uv run download-weights
+# or: python scripts/download_weights.py
 ```
 
 To pre-cache PyAnnote Speaker Diarization models (requires Hugging Face token):
 ```bash
-uv run download-weights --model large-v3 --hf-token "your_hf_token_here"
+uv run download-weights --hf-token "your_hf_token_here"
 ```
 
 ---
@@ -144,7 +149,7 @@ To identify and label speakers (`SPEAKER_00`, `SPEAKER_01`, etc.):
 export HF_TOKEN="hf_xxxxxxxxxxxxxxxxxxxx"
 transcribe "data/input/video.webm" --diarize
 ```
-Or pass token directly:
+Or pass the token directly:
 ```bash
 transcribe "data/input/video.webm" --diarize --hf-token "hf_xxxxxxxxxxxxxxxxxxxx"
 ```
@@ -176,18 +181,26 @@ For an input file named `lecture.webm`, the following files are produced:
 
 ---
 
+## Running Automated Tests
+
+Run the test suite using `pytest`:
+```bash
+uv run pytest tests/
+```
+
+---
+
 ## CLI Options
 
 | Argument | Description | Default |
 |---|---|---|
 | `media_file` | Path to video or audio file | *(Required)* |
 | `-o`, `--output-dir` | Target output directory | Input file directory |
-| `--model` | Whisper model size (`tiny`, `base`, `small`, `medium`, `large-v2`, `large-v3`) | `large-v3` |
-| `-l`, `--language` | Language code (e.g. `en`, `fr`, `es`). Auto-detected if omitted. | Auto-detect |
-| `--device` | Inference device (`cpu` or `cuda`) | Auto-detect (`cpu` on Mac) |
-| `--compute-type` | Precision (`int8`, `float32`, `float16`) | `int8` on CPU |
-| `--batch-size` | Batch size for transcription | `8` |
-| `--no-align` | Skip word-level alignment | Alignment enabled |
+| `--model` | Qwen ASR model repository ID | `Qwen/Qwen3-ASR-1.7B` |
+| `--aligner-model` | Qwen Forced Aligner model repository ID | `Qwen/Qwen3-ForcedAligner-0.6B` |
+| `-l`, `--language` | Language (e.g. `English`, `Chinese`, or code `en`, `zh`). Auto-detected if omitted. | Auto-detect |
+| `--device` | Inference device (`mps`, `cuda`, `cpu`) | Auto-detect (`mps` on Mac) |
+| `--no-align` | Skip word-level forced alignment | Alignment enabled |
 | `--diarize` | Enable PyAnnote Speaker Diarization | Disabled |
 | `--hf-token` | Hugging Face token for diarization | `$HF_TOKEN` env var |
 | `--min-speakers` | Minimum number of speakers | Auto |

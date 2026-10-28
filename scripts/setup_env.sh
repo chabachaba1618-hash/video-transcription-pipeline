@@ -29,7 +29,7 @@ else
     echo "Found ffmpeg at: $(command -v ffmpeg)"
 fi
 
-# Create virtual environment with Python 3.12 (optimal for PyTorch + ctranslate2 on macOS)
+# Create virtual environment with Python 3.12 (optimal for PyTorch + Qwen3-ASR on macOS)
 echo "Creating virtual environment .venv with Python 3.12..."
 uv venv --python 3.12 .venv
 

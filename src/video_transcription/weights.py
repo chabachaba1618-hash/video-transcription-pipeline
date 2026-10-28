@@ -1,13 +1,12 @@
-"""Utilities to download and pre-cache model weights in standard system directories."""
+"""Utilities to download and pre-cache Qwen3-ASR and PyAnnote weights in standard cache directories."""
 
-import os
-import sys
 import argparse
+import os
 import warnings
 from pathlib import Path
 from tqdm import tqdm
 
-# Filter out non-fatal torchcodec / lightning warnings from terminal output
+# Suppress harmless third-party runtime warnings
 warnings.filterwarnings("ignore", category=UserWarning, module=r"pyannote.*")
 warnings.filterwarnings("ignore", message=r".*torchcodec.*")
 warnings.filterwarnings("ignore", message=r".*upgrade_checkpoint.*")
@@ -20,43 +19,36 @@ def get_default_hf_cache_dir() -> Path:
     return Path.home() / ".cache" / "huggingface" / "hub"
 
 
-def download_whisper_weights(model_name: str, device: str = "cpu", compute_type: str = "int8"):
-    print(f"\n[1/3] Downloading Whisper '{model_name}' weights to standard Hugging Face cache...")
-    import whisperx
+def download_qwen_weights(
+    asr_model: str = "Qwen/Qwen3-ASR-1.7B",
+    aligner_model: str = "Qwen/Qwen3-ForcedAligner-0.6B",
+):
+    """Download Qwen3-ASR and Qwen3-ForcedAligner models to standard Hugging Face cache."""
+    from huggingface_hub import snapshot_download
 
-    with tqdm(total=1, desc=f"Loading/Caching Whisper ({model_name})", unit="model") as pbar:
-        model = whisperx.load_model(
-            model_name,
-            device=device,
-            compute_type=compute_type,
-            language="en",
-        )
+    print(f"\n[1/3] Downloading Qwen3 ASR model '{asr_model}' to Hugging Face cache...")
+    with tqdm(total=1, desc=f"Caching {asr_model}", unit="model") as pbar:
+        snapshot_download(repo_id=asr_model)
         pbar.update(1)
-    print(f"✓ Successfully cached Whisper '{model_name}' model.")
-    return model
+    print(f"✓ Successfully cached ASR model '{asr_model}'.")
 
-
-def download_alignment_weights(language_code: str = "en", device: str = "cpu"):
-    print(f"\n[2/3] Downloading Wav2Vec2 alignment model ({language_code}) to standard cache...")
-    import whisperx
-
-    with tqdm(total=1, desc=f"Loading/Caching Alignment ({language_code})", unit="model") as pbar:
-        model_a, metadata = whisperx.load_align_model(
-            language_code=language_code,
-            device=device,
-        )
-        pbar.update(1)
-    print(f"✓ Successfully cached alignment model for '{language_code}'.")
-    return model_a, metadata
+    if aligner_model:
+        print(f"\n[2/3] Downloading Qwen3 Forced Aligner '{aligner_model}' to cache...")
+        with tqdm(total=1, desc=f"Caching {aligner_model}", unit="model") as pbar:
+            snapshot_download(repo_id=aligner_model)
+            pbar.update(1)
+        print(f"✓ Successfully cached Forced Aligner '{aligner_model}'.")
 
 
 def download_diarization_weights(
     hf_token: str | None = None,
-    device: str = "cpu",
     model_name: str = "pyannote/speaker-diarization-community-1",
 ):
+    """Download PyAnnote speaker diarization model to Hugging Face cache."""
     print("\n[3/3] Checking Speaker Diarization model weights...")
     import huggingface_hub
+    from huggingface_hub import snapshot_download
+
     token = hf_token or os.environ.get("HF_TOKEN") or os.environ.get("HUGGINGFACE_TOKEN") or huggingface_hub.get_token()
 
     if not token:
@@ -70,16 +62,11 @@ def download_diarization_weights(
         return None
 
     try:
-        from whisperx.diarize import DiarizationPipeline
-        with tqdm(total=1, desc="Loading/Caching PyAnnote Diarization", unit="model") as pbar:
-            diarize_model = DiarizationPipeline(
-                model_name=model_name,
-                token=token,
-                device=device,
-            )
+        with tqdm(total=1, desc=f"Caching {model_name}", unit="model") as pbar:
+            snapshot_download(repo_id=model_name, token=token)
             pbar.update(1)
-        print("✓ Successfully cached PyAnnote Speaker Diarization pipeline.")
-        return diarize_model
+        print(f"✓ Successfully cached PyAnnote Speaker Diarization model '{model_name}'.")
+        return model_name
     except Exception as e:
         print(f"⚠ Note on Diarization weights: {e}")
         print("  To enable diarization, visit:")
@@ -90,31 +77,19 @@ def download_diarization_weights(
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Pre-download WhisperX and PyAnnote model weights into standard cache directories."
+        description="Pre-download Qwen3-ASR (1.7B) and PyAnnote model weights into standard cache directories."
     )
     parser.add_argument(
-        "--model",
+        "--asr-model",
         type=str,
-        default="large-v3",
-        help="Whisper model size to download (default: large-v3). Options: tiny, base, small, medium, large-v2, large-v3",
+        default="Qwen/Qwen3-ASR-1.7B",
+        help="Qwen ASR model repository ID (default: Qwen/Qwen3-ASR-1.7B).",
     )
     parser.add_argument(
-        "--device",
+        "--aligner-model",
         type=str,
-        default="cpu",
-        help="Device to load model on (cpu or cuda, default: cpu).",
-    )
-    parser.add_argument(
-        "--compute-type",
-        type=str,
-        default="int8",
-        help="Model compute type (int8 or float32, default: int8).",
-    )
-    parser.add_argument(
-        "--language",
-        type=str,
-        default="en",
-        help="Language code for alignment model (default: en).",
+        default="Qwen/Qwen3-ForcedAligner-0.6B",
+        help="Qwen Forced Aligner model repository ID (default: Qwen/Qwen3-ForcedAligner-0.6B).",
     )
     parser.add_argument(
         "--hf-token",
@@ -127,14 +102,12 @@ def main():
     cache_dir = get_default_hf_cache_dir()
     print("==================================================")
     print(f"Target Cache Directory: {cache_dir}")
-    print(f"Model Selection:        {args.model}")
-    print(f"Device:                 {args.device}")
-    print(f"Compute Type:           {args.compute_type}")
+    print(f"ASR Model:              {args.asr_model}")
+    print(f"Aligner Model:          {args.aligner_model}")
     print("==================================================")
 
-    download_whisper_weights(args.model, device=args.device, compute_type=args.compute_type)
-    download_alignment_weights(args.language, device=args.device)
-    download_diarization_weights(args.hf_token, device=args.device)
+    download_qwen_weights(asr_model=args.asr_model, aligner_model=args.aligner_model)
+    download_diarization_weights(hf_token=args.hf_token)
 
     print("\n==================================================")
     print("✓ All requested weights are downloaded and ready!")
